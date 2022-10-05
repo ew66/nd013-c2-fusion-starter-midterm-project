@@ -1,3 +1,10 @@
+This project shows how to use the waymo dataset includes point-cloud parsing, point-cloud visualization, conversion from point-cloud to BEV, BEV visulization.
+
+And it's implemented on the Udacity workspace, then clone the code to this repo.
+
+Please check the [writeup-midterm.md](writeup-midterm.md) for the observation from the point-cloud and range images.
+
+---
 
 # SDCND : Sensor Fusion and Tracking
 This is the project for the second course in the  [Udacity Self-Driving Car Engineer Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213) : Sensor Fusion and Tracking. 
