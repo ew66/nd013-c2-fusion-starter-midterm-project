@@ -20,6 +20,7 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 import misc.params as params 
+import math
 
 class Sensor:
     '''Sensor class including measurement matrix'''
@@ -47,8 +48,18 @@ class Sensor:
         # TODO Step 4: implement a function that returns True if x lies in the sensor's field of view, 
         # otherwise False.
         ############
+        pos_veh = np.ones((4, 1))
+        pos_veh[:3] = x[:3]
+        pos_sens = self.veh_to_sens * pos_veh
+    
+        visible = False
+        
+        # make sure to not divide by zero - we can exclude the whole negative x-range here
+        if pos_sens[0] > 0:
+            alpha = np.arctan(pos_sens[1] / pos_sens[0])
+            visible = (self.fov[0] <= alpha <= self.fov[1])
 
-        return True
+        return visible
         
         ############
         # END student code
@@ -61,6 +72,7 @@ class Sensor:
             pos_veh[0:3] = x[0:3] 
             pos_sens = self.veh_to_sens*pos_veh # transform from vehicle to lidar coordinates
             return pos_sens[0:3]
+        
         elif self.name == 'camera':
             
             ############
@@ -71,7 +83,19 @@ class Sensor:
             # - return h(x)
             ############
 
-            pass
+            pos_veh = np.ones((4, 1)) # homogeneous coordinates
+            pos_veh[0:3] = x[0:3] 
+            pos_sens = self.veh_to_sens * pos_veh # transform from vehicle to camera coordinates
+            
+            hx = np.zeros((2,1))
+            
+            if pos_sens[0] == 0:
+                raise NameError('Jacobian not defined for x[0]=0!')
+            else:
+                hx[0,0] = self.c_i - self.f_i*pos_sens[1]/pos_sens[0] # project to image coordinates
+                hx[1,0] = self.c_j - self.f_j*pos_sens[2]/pos_sens[0]
+                
+            return hx
         
             ############
             # END student code
@@ -142,6 +166,7 @@ class Measurement:
             self.z[0] = z[0]
             self.z[1] = z[1]
             self.z[2] = z[2]
+            self.sensor = sensor # sensor that generated this measurement
             self.R = np.matrix([[sigma_lidar_x**2, 0, 0], # measurement noise covariance matrix
                                 [0, sigma_lidar_y**2, 0], 
                                 [0, 0, sigma_lidar_z**2]])
@@ -153,10 +178,17 @@ class Measurement:
         elif sensor.name == 'camera':
             
             ############
-            # TODO Step 4: initialize camera measurement including z and R 
+            # TODO Step 4: initialize camera measurement including z, R, and sensor 
             ############
-
-            pass
+            self.z = np.zeros((sensor.dim_meas,1)) # measurement vector
+            self.z[0:1] = z[0:1]
+            sigma_cam_i = params.sigma_cam_i
+            sigma_cam_j = params.sigma_cam_j
+            self.R = np.matrix([[sigma_cam_i**2, 0],
+                                [0, sigma_cam_j**2]]) # measurement noise covariance matrix
+            
+            self.width = z[2]
+            self.length = z[3]
         
             ############
             # END student code
