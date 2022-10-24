@@ -5,6 +5,7 @@ And it's implemented on the Udacity workspace, then clone the code to this repo.
 Please check the [writeup-midterm.md](writeup-midterm.md) for the observation from the point-cloud and range images.
 
 Please check the [writeup.md](writeup.md) for the writeup of final project.
+
 ---
 
 # SDCND : Sensor Fusion and Tracking
