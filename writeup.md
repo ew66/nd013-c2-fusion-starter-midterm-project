@@ -1,5 +1,11 @@
 # Writeup: Track 3D-Objects Over Time
 
+The final result of sequence 1 is shown below:
+![final_rmse.png](img/final_rmse.png)
+
+There are three confirmed tracks whose mean RMSE are below 0.20.
+
+
 Please use this starter template to answer the following questions:
 
 ### 1. Write a short recap of the four tracking steps and what you implemented there (filter, track management, association, camera fusion). Which results did you achieve? Which part of the project was most difficult for you to complete, and why?
